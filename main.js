@@ -73,22 +73,22 @@ function convert(img) {
 	copyButton.innerText = "Copy code" // Reset text if another image is uploaded
 	const arcadeColors = [
 		"#00000000", // Transparent
-		"#ffffff",
-		"#ff2121",
-		"#ff93c4",
-		"#ff8135",
-		"#fff609",
-		"#249ca3",
-		"#78dc52",
-		"#003fad",
-		"#87f2ff",
-		"#8e2ec4",
-		"#a4839f",
-		"#5c406c",
-		"#e5cdc4",
-		"#91463d",
-		"#000000",
-	].map(function convertFromHexToRGB(color, index) {
+		document.getElementById('col1').value,
+		document.getElementById('col2').value,
+		document.getElementById('col3').value,
+		document.getElementById('col4').value,
+		document.getElementById('col5').value,
+		document.getElementById('col6').value,
+		document.getElementById('col7').value,
+		document.getElementById('col8').value,
+		document.getElementById('col9').value,
+		document.getElementById('col10').value,
+		document.getElementById('col11').value,
+		document.getElementById('col12').value,
+		document.getElementById('col13').value,
+		document.getElementById('col14').value,
+		document.getElementById('col15').value,
+		].map(function convertFromHexToRGB(color, index) {
 		const r = parseInt(color[1] + color[2], 16) // parseInt("a", 16) === 10
 		const g = parseInt(color[3] + color[4], 16)
 		const b = parseInt(color[5] + color[6], 16)
