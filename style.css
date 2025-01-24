@@ -40,6 +40,10 @@ input[disabled] {pointer-events:none}
 	float: left;
 }
 
+.colorpick {
+	float: center;
+}
+
 label {
 	display: block;
 }
