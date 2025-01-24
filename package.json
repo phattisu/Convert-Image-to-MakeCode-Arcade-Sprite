@@ -1,0 +1,23 @@
+{
+  "name": "convert-image-to-makecode-arcade-sprite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "deploy": "gh-pages -d ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phatisena/Convert-Image-to-MakeCode-Arcade-Sprite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phatisena/Convert-Image-to-MakeCode-Arcade-Sprite/issues"
+  },
+  "homepage": "https://phatisena.github.io/Convert-Image-to-MakeCode-Arcade-Sprite",
+  "dependencies": {
+    "gh-pages": "^2.2.0"
+  }
+}
