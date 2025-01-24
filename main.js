@@ -17,6 +17,7 @@ const fileInput = document.querySelector("input#myFile")
 const form = document.querySelector("form")
 const numberInputs = document.querySelectorAll("input[type='number']")
 const radioButtons = document.querySelectorAll("input[type='radio']")
+const colorButtons = document.querySelectorAll("input[type='color']")
 const scaleFactor = document.querySelector("input[type='number']#factor")
 const textarea = document.querySelector("textarea")
 
@@ -46,6 +47,18 @@ fileInput.addEventListener("change", function whenImageIsUploaded() {
 
 radioButtons.forEach(radioButton => {
 	radioButton.addEventListener("change", function sizeOption() {
+		mode = this.id
+		const numberInput = this.parentElement.querySelector("input[type='number']")
+		customSizes.forEach(field => field.disabled = (mode !== "custom"))
+		scaleFactor.disabled = (mode !== "scale")
+		scaleFactor.value = 0.1
+		img = document.querySelector("img")
+		convert(img)
+	})
+})
+
+colorButtons.forEach(colorButton => {
+	colorButton.addEventListener("change", function sizeOption() {
 		mode = this.id
 		const numberInput = this.parentElement.querySelector("input[type='number']")
 		customSizes.forEach(field => field.disabled = (mode !== "custom"))
