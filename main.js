@@ -58,12 +58,7 @@ radioButtons.forEach(radioButton => {
 })
 
 colorButtons.forEach(colorButton => {
-	colorButton.addEventListener("change", function sizeOption() {
-		mode = this.id
-		const numberInput = this.parentElement.querySelector("input[type='number']")
-		customSizes.forEach(field => field.disabled = (mode !== "custom"))
-		scaleFactor.disabled = (mode !== "scale")
-		scaleFactor.value = 0.1
+	colorButton.addEventListener("change", function colorChange() {
 		img = document.querySelector("img")
 		convert(img)
 	})
