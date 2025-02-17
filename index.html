@@ -17,9 +17,13 @@
 		<p>No need to manually create a sprite first. The code creates it for you.</p>
 	</div>
 	<form action="#" method="POST">
-		<input type="file" id="myFile" name="filename">
-
+		<input type="file" id="myFile" name="filename"/> <button id="run" disabled>convert</button>
 		<div id="parameters">
+      <div id="vleft" class="half">
+           <div id="colpad1" class="colorboard"> color01. <input id="col1" class="colorpicker" type="color" value="#ffffff"/> <input id="col1" class="colortext" type="text" value="#ffffff"/> color02. <input id="col2" class="colorpicker" type="color" value="#ff2121"/> <input id="col2" class="colortext" type="text" value="#ff2121"/> color03. <input id="col3" class="colorpicker" type="color" value="#ff93c4"/> <input id="col3" class="colortext" type="text" value="#ff93c4"/> color04. <input id="col4" class="colorpicker" type="color" value="#ff8135"/> <input id="col4" class="colortext" type="text" value="#ff8135"/>  color05. <input id="col5" class="colorpicker" type="color" value="#fff609"/> <input id="col5" class="colortext" type="text" value="#fff609"/> </div>
+      <div id="colpad2" class="colorboard"> color06. <input id="col6" class="colorpicker" type="color" value="#249ca3"/> <input id="col6" class="colortext" type="text" value="#249ca3"/> color07. <input id="col7" class="colorpicker" type="color" value="#78dc52"/> <input id="col7" class="colortext" type="text" value="#78dc52"/> color08. <input id="col8" class="colorpicker" type="color" value="#003fad"/> <input id="col8" class="colortext" type="text" value="#003fad"/> color09. <input id="col9" class="colorpicker" type="color" value="#87f2ff"/> <input id="col9" class="colortext" type="text" value="#87f2ff"/>  color10. <input id="col10" class="colorpicker" type="color" value="#8e2ec4"/> <input id="col10" class="colortext" type="text" value="#8e2ec4"/> </div>
+      <div id="colpad3" class="colorboard"> color11. <input id="col11" class="colorpicker" type="color" value="#a4839f"/> <input id="col11" class="colortext" type="text" value="#a4839f"/>  color12. <input id="col12" class="colorpicker" type="color" value="#5c406c"/> <input id="col12" class="colortext" type="text" value="#5c406c"/>  color13. <input id="col13" class="colorpicker" type="color" value="#e5cdc4"/> <input id="col13" class="colortext" type="text" value="#e5cdc4"/> color14. <input id="col14" class="colorpicker" type="color" value="#91463d"/> <input id="col14" class="colortext" type="text" value="#91463d"/> color15. <input id="col15" class="colorpicker" type="color" value="#000000"/>  <input id="col15" class="colortext" type="text" value="#000000"/> </div>
+      </div>
 			<div id="left" class="half">
 				<label>
 					<input type="radio" name="size" id="full-width" checked /> Default: Fit to width
@@ -44,8 +48,9 @@
 					<input type="number" name="size" id="height" class="custom" placeholder="height (px)" disabled>
 				</label>
 			</div>
-		</div>
-		<button id="copy" disabled>Copy code</button>
+      
+			
+      <button id="copy" disabled>Copy code</button>
 		<!-- <button type="submit" disabled style="visibility: hidden;">Apply setting</button> -->
 	</form>
 

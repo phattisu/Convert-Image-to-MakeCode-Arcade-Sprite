@@ -12,11 +12,14 @@ let mode = "full-width"
 
 const canvas = document.querySelector("canvas")
 const copyButton = document.querySelector("button#copy")
+const runButton = document.querySelector("button#run")
 const customSizes = document.querySelectorAll("input[type='number'].custom")
 const fileInput = document.querySelector("input#myFile")
 const form = document.querySelector("form")
 const numberInputs = document.querySelectorAll("input[type='number']")
 const radioButtons = document.querySelectorAll("input[type='radio']")
+const colorPicks = document.querySelectorAll("input.colorpicker[type='color']")
+const colorTexts = document.querySelectorAll("input.colortext[type='text']")
 const scaleFactor = document.querySelector("input[type='number']#factor")
 const textarea = document.querySelector("textarea")
 
@@ -25,7 +28,54 @@ let originalImageSize = {
 	height: 0
 }
 
+            function isValidHex(hex) {
+                return /^#([0-9A-Fa-f]{6})$/.test(hex);
+            }
+
+            function syncColorToText(colorInput) {
+                colorTexts.forEach(textInput => {
+                    if (textInput.id === colorInput.id) {
+                        textInput.value = colorInput.value;
+                    }
+                });
+            }
+
+            function syncTextToColor(textInput) {
+                colorPicks.forEach(colorInput => {
+                    if (colorInput.id === textInput.id) {
+                        if (isValidHex(textInput.value)) {
+                            colorInput.value = textInput.value;
+                        } else {
+                            textInput.value = colorInput.value;
+                        }
+                    }
+                });
+            }
+
+            colorPicks.forEach(colorInput => {
+                colorInput.addEventListener("change", function() {
+                    syncColorToText(colorInput);
+           
+                });
+            });
+
+            colorTexts.forEach(textInput => {
+                textInput.addEventListener("change", function() {
+                    syncTextToColor(textInput);
+                  
+                });
+            });
+
+
+runButton.addEventListener("click", function running() {
+		img = document.querySelector("img")
+
+		convert(img)
+	})
+
+
 fileInput.addEventListener("change", function whenImageIsUploaded() {
+  runButton.removeAttribute("disabled")
 	const img = document.createElement("img")
 	img.src = window.URL.createObjectURL(this.files[0])
 	const node = document.querySelector("img")
@@ -71,8 +121,7 @@ form.addEventListener("submit", function convertImage(event) {
 function convert(img) {
 	// originalImageSize
 	copyButton.innerText = "Copy code" // Reset text if another image is uploaded
-	const arcadeColors = [
-		"#00000000", // Transparent
+  /** originalColor: ["#00000000", // Transparent
 		"#ffffff",
 		"#ff2121",
 		"#ff93c4",
@@ -87,8 +136,25 @@ function convert(img) {
 		"#5c406c",
 		"#e5cdc4",
 		"#91463d",
-		"#000000",
-	].map(function convertFromHexToRGB(color, index) {
+		"#000000"] */
+	const arcadeColors = [
+		"#00000000", // Transparent
+		document.getElementById('col1').value,
+		document.getElementById('col2').value,
+		document.getElementById('col3').value,
+		document.getElementById('col4').value,
+		document.getElementById('col5').value,
+		document.getElementById('col6').value,
+		document.getElementById('col7').value,
+		document.getElementById('col8').value,
+		document.getElementById('col9').value,
+		document.getElementById('col10').value,
+		document.getElementById('col11').value,
+		document.getElementById('col12').value,
+		document.getElementById('col13').value,
+		document.getElementById('col14').value,
+		document.getElementById('col15').value,
+		].map(function convertFromHexToRGB(color, index) {
 		const r = parseInt(color[1] + color[2], 16) // parseInt("a", 16) === 10
 		const g = parseInt(color[3] + color[4], 16)
 		const b = parseInt(color[5] + color[6], 16)
