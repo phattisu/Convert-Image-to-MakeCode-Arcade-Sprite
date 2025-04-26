@@ -274,7 +274,6 @@ async function processImage() {
 
         if (file.type === 'image/gif') {
             currentImageType = 'gif';
-            try {
                 const gif = new Gifuct(arrayBuffer);
                 const frames = gif.decompressFrames(true);
 
@@ -376,12 +375,6 @@ async function processImage() {
                 copyButton.innerText = `Copy code (${targetDimensions.width} x ${targetDimensions.height})`;
                 copyButton.disabled = false;
 
-
-            } catch (error) {
-                console.error("Error processing GIF:", error);
-                textarea.textContent = "Error processing GIF. Make sure it's a valid GIF file.";
-                 copyButton.disabled = true;
-            }
 
         } else { // Handle static images (JPG, PNG, etc.)
             currentImageType = 'static';
