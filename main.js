@@ -428,11 +428,11 @@ let mode = "full-width";
                 .replaceAll(":", "")
                 .replaceAll(".", "");
             
-            let spriteJavaScript = `let mySprite${dateString} = sprites.create(img`
+            let spriteJavaScript = `let mySprite${dateString} = sprites.create(img\``
             for (const row in makeCodeString) {
                 spriteJavaScript += `\n${makeCodeString[row]}`;
             }
-            spriteJavaScript += `\n, SpriteKind.Player)`;
+            spriteJavaScript += `\n\`, SpriteKind.Player)`;
 
             textarea.textContent = spriteJavaScript;
             copyButton.removeAttribute("disabled");
