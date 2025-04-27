@@ -28,32 +28,37 @@
         margin-right: 80px;
     }
     .colorboard {
-        display: block;
-        position: grid;
-        float: left;
+        display: flex;
         padding: 2px;
-        max-width: 13rem;
-        .color-pair {
+        position: relative;
+        flex-direction: column;
+        width: 40rem;
+        .colorpad {
             display: flex;
             flex-direction: row;
-            span {
-                flex-wrap: wrap;
-            }
-            .colortext {
-                transform: translateY(25%);
+            flex-wrap: wrap;
+            float: left;
+            max-width: 50rem;
+            .color-pair {
+                display: flex;
+                flex-direction: row;
+                span {
+                    flex-wrap: wrap;
+                }
+                .colortext {
+                    transform: translateY(25%);
+                }
             }
         }
     }
     #colpad1 {
-        right: 10px;
+        bottom: 10px;
     }
     #colpad2 {
-        right: 20px;
-        margin-top: 4.35rem;
+        bottom: 20px;
     }
     #colpad3 {
-        right: 30px;
-        margin-top: 4.35rem;
+        bottom: 30px;
     }
     button#run {
         float: left;
@@ -84,7 +89,7 @@
         cursor: pointer; /* Indicate clickable */
     }
     #run {
-        bottom: 0px;
+        position: relative;
     }
     button:disabled {
         border-color: lightblue;
@@ -161,12 +166,34 @@
         border: 1px dashed gray;
         border-radius: 0.5em;
     }
+
+    @media (max-width: 800px) {
+        .half {
+            float: top;
+            margin-right: 0; /* Reset margin for smaller screens */
+            from {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                max-width: 30rem;
+                max-height: 20rem;
+            }
+        }
+        .colorboard {
+            width: 100%;
+        }
+    }
     
     .dot-matrix-options {
         border: 1px dashed lightblue;
-        padding: 10px;
-        margin-top: 10px;
+        padding: 5px;
+        margin-top: 20rem;
         border-radius: 0.5em;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        max-height: 15rem;
+        width: 42rem
     }
     
     .hidden {
@@ -228,92 +255,97 @@
             <input type="number" class="custom" disabled id="width">
             <label for="height">Height:</label>
             <input type="number" class="custom" disabled id="height">
+            <button id="run" disabled>Convert Image</button>
         </form>
     </div>
 
-    <div class="half colorboard" id="colpad1">
+    <div class="half colorboard" >
         <h3>16-Color Palette</h3>
-        <div class="color-pair">
-            <label for="col1">Color 01:</label>
-            <input type="color" id="col1" value="#ffffff" class="colorpicker">
-            <input type="text" id="col1" value="#ffffff" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col2">Color 02:</label>
-            <input type="color" id="col2" value="#ff2121" class="colorpicker">
-            <input type="text" id="col2" value="#ff2121" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col3">Color 03:</label>
-            <input type="color" id="col3" value="#ff93c4" class="colorpicker">
-            <input type="text" id="col3" value="#ff93c4" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col4">Color 04:</label>
-            <input type="color" id="col4" value="#ff8135" class="colorpicker">
-            <input type="text" id="col4" value="#ff8135" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col5">Color 05:</label>
-            <input type="color" id="col5" value="#fff609" class="colorpicker">
-            <input type="text" id="col5" value="#fff609" class="colortext">
+        <div class="colorpad">
+            <div class="color-pair">
+                <label for="col1">Color 01:</label>
+                <input type="color" id="col1" value="#ffffff" class="colorpicker">
+                <input type="text" id="col1" value="#ffffff" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col2">Color 02:</label>
+                <input type="color" id="col2" value="#ff2121" class="colorpicker">
+                <input type="text" id="col2" value="#ff2121" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col3">Color 03:</label>
+                <input type="color" id="col3" value="#ff93c4" class="colorpicker">
+                <input type="text" id="col3" value="#ff93c4" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col4">Color 04:</label>
+                <input type="color" id="col4" value="#ff8135" class="colorpicker">
+                <input type="text" id="col4" value="#ff8135" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col5">Color 05:</label>
+                <input type="color" id="col5" value="#fff609" class="colorpicker">
+                <input type="text" id="col5" value="#fff609" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col6">Color 06:</label>
+                <input type="color" id="col6" value="#249ca3" class="colorpicker">
+                <input type="text" id="col6" value="#249ca3" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col7">Color 07:</label>
+                <input type="color" id="col7" value="#78dc52" class="colorpicker">
+                <input type="text" id="col7" value="#78dc52" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col8">Color 08:</label>
+                <input type="color" id="col8" value="#003fad" class="colorpicker">
+                <input type="text" id="col8" value="#003fad" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col9">Color 09:</label>
+                <input type="color" id="col9" value="#87f2ff" class="colorpicker">
+                <input type="text" id="col9" value="#87f2ff" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col10">Color 10:</label>
+                <input type="color" id="col10" value="#8e2ec4" class="colorpicker">
+                <input type="text" id="col10" value="#8e2ec4" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col11">Color 11:</label>
+                <input type="color" id="col11" value="#a4839f" class="colorpicker">
+                <input type="text" id="col11" value="#a4839f" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col12">Color 12:</label>
+                <input type="color" id="col12" value="#5c406c" class="colorpicker">
+                <input type="text" id="col12" value="#5c406c" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col13">Color 13:</label>
+                <input type="color" id="col13" value="#e5cdc4" class="colorpicker">
+                <input type="text" id="col13" value="#e5cdc4" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col14">Color 14:</label>
+                <input type="color" id="col14" value="#91463d" class="colorpicker">
+                <input type="text" id="col14" value="#91463d" class="colortext">
+            </div>
+            <div class="color-pair">
+                <label for="col15">Color 15:</label>
+                <input type="color" id="col15" value="#000000" class="colorpicker">
+                <input type="text" id="col15" value="#000000" class="colortext">
+            </div>
         </div>
     </div>
 
     <div class="half colorboard" id="colpad2">
-        <div class="color-pair">
-            <label for="col6">Color 06:</label>
-            <input type="color" id="col6" value="#249ca3" class="colorpicker">
-            <input type="text" id="col6" value="#249ca3" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col7">Color 07:</label>
-            <input type="color" id="col7" value="#78dc52" class="colorpicker">
-            <input type="text" id="col7" value="#78dc52" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col8">Color 08:</label>
-            <input type="color" id="col8" value="#003fad" class="colorpicker">
-            <input type="text" id="col8" value="#003fad" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col9">Color 09:</label>
-            <input type="color" id="col9" value="#87f2ff" class="colorpicker">
-            <input type="text" id="col9" value="#87f2ff" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col10">Color 10:</label>
-            <input type="color" id="col10" value="#8e2ec4" class="colorpicker">
-            <input type="text" id="col10" value="#8e2ec4" class="colortext">
-        </div>
+        
     </div>
 
     <div class="half colorboard" id="colpad3">
-        <div class="color-pair">
-            <label for="col11">Color 11:</label>
-            <input type="color" id="col11" value="#a4839f" class="colorpicker">
-            <input type="text" id="col11" value="#a4839f" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col12">Color 12:</label>
-            <input type="color" id="col12" value="#5c406c" class="colorpicker">
-            <input type="text" id="col12" value="#5c406c" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col13">Color 13:</label>
-            <input type="color" id="col13" value="#e5cdc4" class="colorpicker">
-            <input type="text" id="col13" value="#e5cdc4" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col14">Color 14:</label>
-            <input type="color" id="col14" value="#91463d" class="colorpicker">
-            <input type="text" id="col14" value="#91463d" class="colortext">
-        </div>
-        <div class="color-pair">
-            <label for="col15">Color 15:</label>
-            <input type="color" id="col15" value="#000000" class="colorpicker">
-            <input type="text" id="col15" value="#000000" class="colortext">
-        </div>
+
     </div>
 
     <div class="dot-matrix-options hidden">
@@ -339,7 +371,6 @@
         </div>
     </div>
 
-    <button id="run" disabled>Convert Image</button>
 </div>
 
 <canvas></canvas>
