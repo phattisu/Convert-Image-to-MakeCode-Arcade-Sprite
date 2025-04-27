@@ -4,6 +4,7 @@ let dotBlockSize = 2; // Default dot matrix block size
 let originalImageSize = { width: 0, height: 0 };
 let gifData = null; // Store parsed GIF data
 let gifMinDelay = 0; // Store minimum GIF frame delay
+let imgrender = [];
 
 // --- Get DOM Elements ---
 const canvas = document.querySelector("canvas");
@@ -298,11 +299,15 @@ async function processFrameDataToImageData(frameData, lsd) {
     return tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 }
 
+function rgb(r,g,b) {
+    return (r * 65536) + (g * 256) + b
+}
 
 // --- Image Processing Function ---
 async function convert(imgElement, frameImageData = null, frameIndex = 0) {
     copyButton.innerText = "Copy code"; // Reset text
 
+    imgrender = []
     let sourceImageData;
     let originalWidth, originalHeight;
 
@@ -341,7 +346,6 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
     canvas.height = outputCanvasHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
 
-
     // Get the palette or dot matrix colors
     const arcadeColors = [
         "#00000000", // Transparent - Index 0
@@ -374,8 +378,6 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
 
     let pixelIndex = 0;
     const outputImageData = ctx.createImageData(outputCanvasWidth, outputCanvasHeight);
-
-
     // Calculate mapping from target dimensions (based on size options) back to original image dimensions
     const xScale = originalWidth / targetWidth;
     const yScale = originalHeight / targetHeight;
@@ -404,6 +406,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     // Draw transparent on the preview canvas
                     // No need to set pixel data in outputImageData for transparent areas unless required by MakeCode format
                     // For MakeCode string, this will be '0'
+                    
                 } else if (currentMode === "dotMatrix") {
                     // Decide how transparent original pixels behave in dot matrix
                     // Option 1: Make the entire block transparent (simplest)
@@ -433,7 +436,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     })[0];
 
                     // Draw preview pixel
-                    ctx.fillStyle = rgb(${nearest.color.r}, ${nearest.color.g}, ${nearest.color.b});
+                    ctx.fillStyle = rgb(nearest.color.r, nearest.color.g, nearest.color.b);
                     ctx.fillRect(x, y, 1, 1);
 
                     // Set pixel data in outputImageData for MakeCode string generation
@@ -475,7 +478,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                         const mixedB = Math.round(dotFgRgb.b * percentage + dotBgRgb.b * (1 - percentage));
 
                         // Draw preview pixel (scaled output canvas)
-                        ctx.fillStyle = rgb(${mixedR}, ${mixedG}, ${mixedB});
+                        ctx.fillStyle = rgb(mixedR, mixedG, mixedB);
                          // In solid approximation, draw one pixel on the output canvas
                         ctx.fillRect(x, y, 1, 1);
 
@@ -533,7 +536,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                                 const dotColor = useFg ? dotFgRgb : dotBgRgb;
 
                                 // Draw preview pixel in the block
-                                ctx.fillStyle = rgb(${dotColor.r}, ${dotColor.g}, ${dotColor.b});
+                                ctx.fillStyle = rgb(dotColor.r, dotColor.g, dotColor.b);
                                 ctx.fillRect(outputX, outputY, 1, 1);
 
                                  // Set pixel data in outputImageData
@@ -564,7 +567,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
     }, {});
     // Add transparent color mapping explicitly
     paletteLookup[rgbToHex(0,0,0)] = '0'; // Assuming 000000 is transparent if alpha is 0 (or use the explicit transparent color input)
-    const transparentColor = hexToRgb(document.getElementById('col0').value); // Get explicit transparent color if used in palette
+    const transparentColor = hexToRgb("#00000000"); // Get explicit transparent color if used in palette
     paletteLookup[rgbToHex(transparentColor.r, transparentColor.g, transparentColor.b)] = '0';
 
 
@@ -631,6 +634,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     }
                 }
             }
+            colorIndex = (colorIndex.toLowerCase() === "0") ? "f" : colorIndex.toLowerCase();
             rowString += colorIndex;
         }
         makeCodeString += rowString + "\n";
@@ -750,7 +754,7 @@ async function running() {
     } else {
         // Process static image
         try {
-            const result = await convert(img); // Process the single image
+            const result = convert(img); // Process the single image
             // Textarea and copy button are handled inside convert for static images
             statusDiv.textContent = "Conversion complete.";
         } catch (error) {
@@ -845,8 +849,3 @@ copyButton.addEventListener("click", function addCodeToClipboard() {
     // resetImageSize(document.querySelector("img")); // Not needed
 });
 
-// Add transparent color to palette sync
-const col0ColorInput = document.querySelector("#col0.colorpicker");
-const col0TextInput = document.querySelector("#col0.colortext");
-col0ColorInput.addEventListener("input", () => syncColorToText(col0ColorInput));
-col0TextInput.addEventListener("change", () => syncTextToColor(col0TextInput));

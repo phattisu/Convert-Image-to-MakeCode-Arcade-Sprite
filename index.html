@@ -204,25 +204,25 @@
 
     <div class="mode-selection">
         <h3>Processing Mode</h3>
-        <label><input type="radio" name="processingMode" id="modeSolid" value="solid" checked> Solid Color (16-color palette)</label>
-        <label><input type="radio" name="processingMode" id="modeDotMatrix" value="dotMatrix"> Dot Matrix</label>
+        <label><input type="radio" name="processingMode" id="modeSolid" value="solid" checked/> Solid Color (16-color palette)</label>
+        <label><input type="radio" name="processingMode" id="modeDotMatrix" value="dotMatrix"/> Dot Matrix</label>
     </div>
 
     <div class="half">
         <h3>Image Size</h3>
         <form>
             <label>
-                <input type="radio" name="sizeOption" id="full-width"> Full width (160px)
+                <input type="radio" name="sizeOption" id="full-width" checked/> Full width (160px)
             </label>
             <label>
-                <input type="radio" name="sizeOption" id="full-height"> Full height (120px)
+                <input type="radio" name="sizeOption" id="full-height" /> Full height (120px)
             </label>
             <label>
-                <input type="radio" name="sizeOption" id="scale"> Scale by:
+                <input type="radio" name="sizeOption" id="scale" /> Scale by factor:
             </label>
-            <input type="number" id="factor" disabled value="0.1">
+            <input type="number" id="factor" disabled value="0.1"/>
             <label>
-                <input type="radio" name="sizeOption" id="custom"> Custom size:
+                <input type="radio" name="sizeOption" id="custom" /> Custom size:
             </label>
             <label for="width">Width:</label>
             <input type="number" class="custom" disabled id="width">
