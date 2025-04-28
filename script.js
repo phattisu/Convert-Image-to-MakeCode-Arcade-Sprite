@@ -349,7 +349,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
     let outputCanvasHeight = targetHeight;
     let makeCodeScaleFactor = 1; // How much MakeCode dimensions are scaled
 
-    if (currentMode === "dotMatrix") {
+    if (currentMode === "dotMatrix" && currentDotMatrixType === "pattern") {
         makeCodeScaleFactor = dotBlockSize;
         outputCanvasWidth = targetWidth * dotBlockSize;
         outputCanvasHeight = targetHeight * dotBlockSize;
