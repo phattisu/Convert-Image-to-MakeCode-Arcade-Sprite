@@ -130,6 +130,9 @@ radioButtons.forEach(radioButton => {
                 document.querySelector("input#width").value = canvas.width
                 document.querySelector("input#height").value = canvas.height
             }
+            document.querySelector("input#ratio").removeAttribute("disabled")
+        } else {
+            document.querySelector("input#ratio").setAttribute("disabled", "true")
         }
         customSizes.forEach(field => field.disabled = (sizeMode !== "custom"));
         scaleFactor.disabled = (sizeMode !== "scale");
@@ -840,6 +843,34 @@ function updateImageDimensions(img, sizeMode) {
      // The actual drawing resolution will be set within the convert function
 }
 
+document.querySelectorAll("input#width").forEach(iwidth => {
+    iwidth.addEventListener("change", function () {
+        if (!document.querySelector("input#ratio").disabled) {
+            if (originalImageSize) {
+                const factor = document.querySelector("input#width").value / originalImageSize.width;
+                document.querySelector("input#height").value = Math.round(originalImageSize.height * factor);
+            } else {
+                const factor = document.querySelector("input#width").value / canvas.width;
+                document.querySelector("input#height").value = Math.round(canvas.height * factor);
+            }
+        }
+    })
+})
+
+document.querySelectorAll("input#height").forEach(iheight => {
+    iheight.addEventListener("change", function () {
+        if (!document.querySelector("input#ratio").disabled) {
+            if (originalImageSize) {
+                const factor = document.querySelector("input#height").value / originalImageSize.height;
+                document.querySelector("input#width").value = Math.round(originalImageSize.width * factor);
+            } else {
+                const factor = document.querySelector("input#height").value / canvas.height;
+                document.querySelector("input#width").value = Math.round(canvas.width * factor);
+            }
+        }
+    })
+})
+
 
 // --- Initial State ---
 dotMatrixOptionsDiv.classList.add("hidden"); // Hide dot matrix options initially
@@ -864,3 +895,4 @@ copyButton.addEventListener("click", function addCodeToClipboard() {
     // resetImageSize(document.querySelector("img")); // Not needed
 });
 
+console.log(document.querySelector("input#ratio").disabled)
