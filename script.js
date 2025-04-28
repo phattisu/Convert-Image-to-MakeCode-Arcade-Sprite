@@ -474,8 +474,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                         percentage = 1; // Exactly matches Foreground
                     } else if (distBg === 0) {
                         percentage = 0; // Exactly matches Background
-                    }
-                    else {
+                    } else {
                        percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
                                                                // Closer to FG means smaller distFg, larger percentage (closer to FG color)
                                                                // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
@@ -483,7 +482,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     }
 
                     // Clamp percentage between 0 and 1
-                    percentage = Math.max(0, Math.min(1, percentage));
+                    percentage = Math.max(0, Math.min(1,1 - percentage));
 
 
                     if (currentDotMatrixType === "solidApprox") {
