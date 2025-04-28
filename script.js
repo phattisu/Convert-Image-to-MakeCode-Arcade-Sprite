@@ -474,11 +474,11 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     } else if (distBg === 0) {
                         percentage = 0; // Exactly matches Background
                     } else {
-			if (distFg > distBg) {
-			percentage = distFg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
-			}                                        // Closer to FG means smaller distFg, larger percentage (closer to FG color)
-                        else {                                   // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
-                        percentage = distBg / (distFg + distBg); // Higher % means closer to FG color
+			if (false) {
+			    percentage = distFg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
+			}                                            // Closer to FG means smaller distFg, larger percentage (closer to FG color)
+                        else {                                       // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
+                            percentage = distBg / (distFg + distBg); // Higher % means closer to FG color
 			}
 		}
 
