@@ -662,8 +662,13 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
         // Return frame string and delay
         return { spriteCode: spriteCode, delay: gifData.frames[frameIndex].delay || gifMinDelay };
     } else {
+        let dateString = new Date()
+		.toISOString()
+		.replaceAll("-", "")
+		.replaceAll(":", "")
+		.replaceAll(".", "")
         // For static image, set textarea and enable copy
-        textarea.textContent = `let mySprite = sprites.create(${spriteCode}, SpriteKind.Player);\n`;
+        textarea.textContent = `let mySprite${dateString} = sprites.create(${spriteCode}, SpriteKind.Player);\n`;
         copyButton.removeAttribute("disabled");
         return { spriteCode: spriteCode }; // Return for consistency
     }
