@@ -470,15 +470,15 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                         // Should not happen with distinct colors, but for safety
                          percentage = 1; // Arbitrary, assumes it's closer to FG in this edge case
                     } else if (distFg === 0) {
-                        percentage = 0; // Exactly matches Foreground
+                        percentage = 1; // Exactly matches Foreground
                     } else if (distBg === 0) {
-                        percentage = 1; // Exactly matches Background
+                        percentage = 0; // Exactly matches Background
                     } else {
-			if (distBg < distFg) {
-			    percentage = distFg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
+			if (distBg > distFg) {
+			    percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
 			}                                            // Closer to FG means smaller distFg, larger percentage (closer to FG color)
                         else {                                       // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
-                            percentage = distBg / (distFg + distBg); // Higher % means closer to FG color
+                            percentage = distFg / (distFg + distBg); // Higher % means closer to FG color
 			}
 		}
 
