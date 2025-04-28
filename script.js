@@ -434,7 +434,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     // The MakeCode string character for transparent is usually '0'
                 } else if (currentMode === "dotMatrix") {
                      // Draw transparent block in the preview canvas
-                    // ctx.clearRect(x * dotBlockSize, y * dotBlockSize, dotBlockSize, dotBlockSize);
+                     // ctx.clearRect(x * dotBlockSize, y * dotBlockSize, dotBlockSize, dotBlockSize);
                      // For MakeCode string, a block of '0's
                 }
 
@@ -474,11 +474,13 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     } else if (distBg === 0) {
                         percentage = 0; // Exactly matches Background
                     } else {
-                       percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
-                                                               // Closer to FG means smaller distFg, larger percentage (closer to FG color)
-                                                               // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
+			if (distBg > distFg {
+                        percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
+			}                                        // Closer to FG means smaller distFg, larger percentage (closer to FG color)
+                        else {                                   // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
                         percentage = distFg / (distFg + distBg); // Higher % means closer to FG color
-                    }
+			}
+		    }
 
                     // Clamp percentage between 0 and 1
                     percentage = Math.max(0, Math.min(1,1 - percentage));
