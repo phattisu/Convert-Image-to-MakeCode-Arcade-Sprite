@@ -204,12 +204,8 @@ async function whenImageIsUploaded() {
     const reader = new FileReader();
 
     reader.onload = async function(e) {
-        const img = document.createElement("img");
+        const img = document.querySelector("img");
         const node = document.querySelector("img");
-        if (node !== null) {
-            node.parentNode.removeChild(node);
-        }
-        document.body.appendChild(img);
 
         img.onload = () => {
             originalImageSize.width = img.width;
@@ -883,6 +879,9 @@ copyButton.setAttribute("disabled", "true"); // Disable copy on load
 
 document.querySelector("input#width").value = canvas.width
 document.querySelector("input#height").value = canvas.height
+
+document.querySelector("img").width = canvas.width
+document.querySelector("img").height = canvas.height
 
 // Restore original image size (this function is not needed anymore with updated logic)
 // function resetImageSize(img) {
