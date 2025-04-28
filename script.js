@@ -118,7 +118,19 @@ fileInput.addEventListener("change", whenImageIsUploaded);
 
 radioButtons.forEach(radioButton => {
     radioButton.addEventListener("change", function sizeOption() {
+        document.querySelector("input#width").removeAttribute("disabled")
+        document.querySelector("input#height").removeAttribute("disabled")
+        runButton.removeAttribute("disabled")
         let sizeMode = this.id;
+        if (sizeMode === "custom") {
+            if (document.querySelector("img")) {
+                document.querySelector("input#width").value = document.querySelector("img").width
+                document.querySelector("input#height").value = document.querySelector("img").height
+            } else {
+                document.querySelector("input#width").value = canvas.width
+                document.querySelector("input#height").value = canvas.height
+            }
+        }
         customSizes.forEach(field => field.disabled = (sizeMode !== "custom"));
         scaleFactor.disabled = (sizeMode !== "scale");
         if (sizeMode === "scale" && scaleFactor.value === "") scaleFactor.value = 0.1; // Set default if empty
@@ -300,7 +312,7 @@ async function processFrameDataToImageData(frameData, lsd) {
 }
 
 function rgb(r,g,b) {
-    return (r * 65536) + (g * 256) + b
+    return ((r * 65536) + (g * 256) + b)
 }
 
 // --- Image Processing Function ---
@@ -436,7 +448,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     })[0];
 
                     // Draw preview pixel
-                    ctx.fillStyle = rgb(nearest.color.r, nearest.color.g, nearest.color.b);
+                    ctx.fillStyle = `rgb(${nearest.color.r}, ${nearest.color.g}, ${nearest.color.b})`;
                     ctx.fillRect(x, y, 1, 1);
 
                     // Set pixel data in outputImageData for MakeCode string generation
@@ -478,7 +490,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                         const mixedB = Math.round(dotFgRgb.b * percentage + dotBgRgb.b * (1 - percentage));
 
                         // Draw preview pixel (scaled output canvas)
-                        ctx.fillStyle = rgb(mixedR, mixedG, mixedB);
+                        ctx.fillStyle = `rgb(${mixedR}, ${mixedG}, ${mixedB})`;
                          // In solid approximation, draw one pixel on the output canvas
                         ctx.fillRect(x, y, 1, 1);
 
@@ -536,7 +548,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                                 const dotColor = useFg ? dotFgRgb : dotBgRgb;
 
                                 // Draw preview pixel in the block
-                                ctx.fillStyle = rgb(dotColor.r, dotColor.g, dotColor.b);
+                                ctx.fillStyle = `rgb(${dotColor.r}, ${dotColor.g}, ${dotColor.b})`;
                                 ctx.fillRect(outputX, outputY, 1, 1);
 
                                  // Set pixel data in outputImageData
@@ -833,6 +845,9 @@ function updateImageDimensions(img, sizeMode) {
 dotMatrixOptionsDiv.classList.add("hidden"); // Hide dot matrix options initially
 runButton.setAttribute("disabled", "true"); // Disable run on load
 copyButton.setAttribute("disabled", "true"); // Disable copy on load
+
+document.querySelector("input#width").value = canvas.width
+document.querySelector("input#height").value = canvas.height
 
 // Restore original image size (this function is not needed anymore with updated logic)
 // function resetImageSize(img) {

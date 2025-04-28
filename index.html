@@ -38,10 +38,11 @@
             flex-direction: row;
             flex-wrap: wrap;
             float: left;
-            max-width: 50rem;
+            max-width: 40rem;
             .color-pair {
                 display: flex;
                 flex-direction: row;
+                padding: 2px;
                 span {
                     flex-wrap: wrap;
                 }
@@ -114,10 +115,10 @@
     }
     textarea {
         clear: both;
+        display: block;
         border-radius: 1.2em;
         background-color: #000;
         color: #fff;
-        display: block;
         width: calc(100% - 40px); /* Adjusted width */
         margin-top: 20px;
         padding: 10px;
@@ -375,7 +376,7 @@
 
 <canvas></canvas>
 
-<textarea rows="10" cols="80" readonly></textarea>
+<textarea class="" id="" rows="10" cols="80" readonly></textarea>
 
 <button id="copy" disabled>Copy code</button>
 
