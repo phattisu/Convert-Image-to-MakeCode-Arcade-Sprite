@@ -121,6 +121,7 @@ radioButtons.forEach(radioButton => {
         document.querySelector("input#width").removeAttribute("disabled")
         document.querySelector("input#height").removeAttribute("disabled")
         runButton.removeAttribute("disabled")
+        document.querySelector("input#ratio").removeAttribute("disabled")
         let sizeMode = this.id;
         if (sizeMode === "custom") {
             if (document.querySelector("img")) {
@@ -130,7 +131,6 @@ radioButtons.forEach(radioButton => {
                 document.querySelector("input#width").value = canvas.width
                 document.querySelector("input#height").value = canvas.height
             }
-            document.querySelector("input#ratio").removeAttribute("disabled")
         } else {
             document.querySelector("input#ratio").setAttribute("disabled", "true")
         }
