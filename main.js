@@ -222,9 +222,8 @@ let mode = "full-width";
             gifDelayInfo += `Frame delays: min ${minDelay}ms, max ${maxDelay}ms`;
             
             // For demo purposes, we'll create a simple animated GIF preview
-            const img = document.createElement("img");
+            const img = document.querySelector("img");
             img.src = window.URL.createObjectURL(file);
-            document.body.appendChild(img);
             
             img.addEventListener("load", () => {
                 // Create frames from the GIF (simplified - in a real app you'd use a proper GIF decoder)
