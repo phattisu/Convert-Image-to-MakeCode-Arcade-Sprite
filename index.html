@@ -147,6 +147,10 @@
         max-height: 300px; /* Increased max height for better preview */
         border: 1px solid gray; /* Added border */
     }
+    div.output {
+        display: flex;
+        flex-direction: row;
+    }
     #info {
         background-color: #000;
         border: 1px solid hsl(100, 50%, 50%);
@@ -382,7 +386,7 @@
 
 </div>
 
-<canvas></canvas> <img></img>
+<div class="output"><canvas></canvas> <img></img> </div>
 
 <textarea class="" id="" rows="10" cols="80" readonly></textarea>
 
