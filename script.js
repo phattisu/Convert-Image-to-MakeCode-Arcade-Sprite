@@ -880,9 +880,6 @@ copyButton.setAttribute("disabled", "true"); // Disable copy on load
 document.querySelector("input#width").value = canvas.width
 document.querySelector("input#height").value = canvas.height
 
-document.querySelector("img").width = canvas.width
-document.querySelector("img").height = canvas.height
-
 // Restore original image size (this function is not needed anymore with updated logic)
 // function resetImageSize(img) {
 //     img.width = originalImageSize.width;
