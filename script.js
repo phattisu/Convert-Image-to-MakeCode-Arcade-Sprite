@@ -204,9 +204,12 @@ async function whenImageIsUploaded() {
     const reader = new FileReader();
 
     reader.onload = async function(e) {
-        const img = document.querySelector("img");
+        const img = document.createElement("img");
         const node = document.querySelector("img");
-
+        if (node !== null) {
+            node.parentNode.removeChild(node);
+        }
+        document.body.querySelector("div.output").appendChild(img);
         img.onload = () => {
             originalImageSize.width = img.width;
             originalImageSize.height = img.height;
