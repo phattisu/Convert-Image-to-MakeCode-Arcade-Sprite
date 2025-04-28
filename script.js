@@ -209,7 +209,7 @@ async function whenImageIsUploaded() {
         if (node !== null) {
             node.parentNode.removeChild(node);
         }
-        document.body.querySelector("div.output").appendChild(img);
+        document.querySelector("div.output").appendChild(img);
         img.onload = () => {
             originalImageSize.width = img.width;
             originalImageSize.height = img.height;
