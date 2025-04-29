@@ -5,6 +5,7 @@ let originalImageSize = { width: 0, height: 0 };
 let gifData = null; // Store parsed GIF data
 let gifMinDelay = 0; // Store minimum GIF frame delay
 let imgrender = [];
+let dateString;
 
 // --- Get DOM Elements ---
 const canvas = document.querySelector("canvas");
@@ -184,12 +185,36 @@ dotBlockSizeInput.addEventListener("change", function() {
     }
 });
 
+document.querySelector("button#download").forEach(canv => {
+    canv.addEventListener("click", downloadCanvasAsImage)
+})
 
 // Prevent form submission from refreshing
 form.addEventListener("submit", function convertImage(event) {
     event.preventDefault();
      // Conversion now happens on runButton click
 });
+
+function downloadCanvasAsImage(){
+    if (file.type === "image/gif") return;
+
+    let canvasImage = document.querySelector("canvas").toDataURL(file.type);
+    
+    // this can be used to download any image from webpage to local disk
+    let xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.onload = function () {
+        let a = document.createElement('a');
+        a.href = window.URL.createObjectURL(xhr.response);
+        a.download = `canvas${dateString}.${file.type.toString().replace("image/", "")}`;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    };
+    xhr.open('GET', canvasImage); // This is to download the canvas Image
+    xhr.send();
+}
 
 // --- Image Loading and GIF Parsing ---
 async function whenImageIsUploaded() {
@@ -265,6 +290,7 @@ async function whenImageIsUploaded() {
             img.src = e.target.result;
         }
     };
+    document.querySelector("button#download").removeAttribute("disabled")
 
     reader.readAsDataURL(file); // Read as Data URL for static images
 }
@@ -662,7 +688,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
         // Return frame string and delay
         return { spriteCode: spriteCode, delay: gifData.frames[frameIndex].delay || gifMinDelay };
     } else {
-        let dateString = new Date()
+        dateString = new Date()
 		.toISOString()
 		.replaceAll("-", "")
 		.replaceAll(":", "")
@@ -850,10 +876,10 @@ function updateImageDimensions(img, sizeMode) {
 
 document.querySelectorAll("input#width").forEach(iwidth => {
     iwidth.addEventListener("change", function () {
-        if (!document.querySelector("input#ratio").disabled) {
-            if (originalImageSize) {
-                const factor = document.querySelector("input#width").value / originalImageSize.width;
-                document.querySelector("input#height").value = Math.round(originalImageSize.height * factor);
+        if (document.querySelector("input#ratio").checked) {
+            if (document.querySelector("img")) {
+                const factor = document.querySelector("input#width").value / document.querySelector("img").width;
+                document.querySelector("input#height").value = Math.round(document.querySelector("img").height * factor);
             } else {
                 const factor = document.querySelector("input#width").value / canvas.width;
                 document.querySelector("input#height").value = Math.round(canvas.height * factor);
@@ -864,13 +890,27 @@ document.querySelectorAll("input#width").forEach(iwidth => {
 
 document.querySelectorAll("input#height").forEach(iheight => {
     iheight.addEventListener("change", function () {
-        if (!document.querySelector("input#ratio").disabled) {
-            if (originalImageSize) {
-                const factor = document.querySelector("input#height").value / originalImageSize.height;
-                document.querySelector("input#width").value = Math.round(originalImageSize.width * factor);
+        if (document.querySelector("input#ratio").checked) {
+            if (document.querySelector("img")) {
+                const factor = document.querySelector("input#height").value / document.querySelector("img").height;
+                document.querySelector("input#width").value = Math.round(document.querySelector("img").width * factor);
             } else {
                 const factor = document.querySelector("input#height").value / canvas.height;
                 document.querySelector("input#width").value = Math.round(canvas.width * factor);
+            }
+        }
+    })
+})
+
+document.querySelector("input#custom").forEach(check => {
+    check.addEventListener("change", function () {
+        if (check.checked) {
+            if (document.querySelector("img")) {
+                document.querySelector("input#height").value = document.querySelector("img").height;
+                document.querySelector("input#width").value = document.querySelector("img").width;
+            } else {
+                document.querySelector("input#height").value = canvas.height;
+                document.querySelector("input#width").value = canvas.width;
             }
         }
     })
