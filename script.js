@@ -186,7 +186,12 @@ dotBlockSizeInput.addEventListener("change", function() {
 });
 
 document.querySelector("button#download").forEach(canv => {
-    canv.addEventListener("click", downloadCanvasAsImage)
+    canv.addEventListener("click", function() {
+        if (file.type === "image/gif") {
+            return
+        }
+        ReImg.fromCanvas(canvas).downloadPng()
+    })
 })
 
 // Prevent form submission from refreshing
@@ -194,27 +199,6 @@ form.addEventListener("submit", function convertImage(event) {
     event.preventDefault();
      // Conversion now happens on runButton click
 });
-
-function downloadCanvasAsImage(){
-    if (file.type === "image/gif") return;
-
-    let canvasImage = document.querySelector("canvas").toDataURL(file.type);
-    
-    // this can be used to download any image from webpage to local disk
-    let xhr = new XMLHttpRequest();
-    xhr.responseType = 'blob';
-    xhr.onload = function () {
-        let a = document.createElement('a');
-        a.href = window.URL.createObjectURL(xhr.response);
-        a.download = `canvas${dateString}.${file.type.toString().replace("image/", "")}`;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-    };
-    xhr.open('GET', canvasImage); // This is to download the canvas Image
-    xhr.send();
-}
 
 // --- Image Loading and GIF Parsing ---
 async function whenImageIsUploaded() {
@@ -941,3 +925,102 @@ copyButton.addEventListener("click", function addCodeToClipboard() {
 });
 
 console.log(document.querySelector("input#ratio").disabled)
+
+ReImg = {
+
+    OutputProcessor: function(encodedData, svgElement) {
+
+        var isPng = function() {
+            return encodedData.indexOf('data:image/png') === 0;
+        };
+
+        var downloadImage = function(data, filename) {
+            var a = document.createElement('a');
+            a.href = data;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+        };
+
+        return {
+            toBase64: function() {
+                return encodedData;
+            },
+            toImg: function() {
+                var imgElement = document.createElement('img');
+                imgElement.src = encodedData;
+                return imgElement;
+            },
+            toCanvas: function(callback) {
+                var canvas = document.createElement('canvas');
+                var boundedRect = svgElement.getBoundingClientRect();
+                canvas.width = boundedRect.width;
+                canvas.height = boundedRect.height;
+                var canvasCtx = canvas.getContext('2d');
+
+                var img = this.toImg();
+                img.onload = function() {
+                    canvasCtx.drawImage(img, 0, 0);
+                    callback(canvas);
+                };
+            },
+            toPng: function() {
+                if (isPng()) {
+                    var img = document.createElement('img');
+                    img.src = encodedData;
+                    return img;
+                }
+
+                this.toCanvas(function(canvas) {
+                    var img = document.createElement('img');
+                    img.src = canvas.toDataURL();
+                    return img;
+                });
+            },
+            toJpeg: function(quality) { // quality should be between 0-1
+                quality = quality || 1.0;
+                (function(q) {
+                    this.toCanvas(function(canvas) {
+                        var img = document.createElement('img');
+                        img.src = canvas.toDataURL('image/jpeg', q);
+                        return img;
+                    });
+                })(quality);
+            },
+            downloadPng: function(filename) {
+                filename = filename || 'image.png';
+                if (isPng()) {
+                    // it's a canvas already
+                    downloadImage(encodedData, filename);
+                    return;
+                }
+
+                // convert to canvas first
+                this.toCanvas(function(canvas) {
+                    downloadImage(canvas.toDataURL(), filename);
+                });
+            }
+        };
+    },
+
+    fromSvg: function(svgElement) {
+        var svgString = new XMLSerializer().serializeToString(svgElement);
+        return new this.OutputProcessor('data:image/svg+xml;base64,' + window.btoa(svgString), svgElement);
+    },
+
+    fromCanvas: function(canvasElement) {
+        var dataUrl = canvasElement.toDataURL();
+        return new this.OutputProcessor(dataUrl);
+    }
+
+};
+
+if(typeof exports === 'object' && typeof module !==  void 0) {
+    module.exports = {
+        ReImg:ReImg
+    };
+}
+
+else {
+    window.ReImg = ReImg;
+}
