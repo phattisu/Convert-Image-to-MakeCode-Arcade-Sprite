@@ -29,13 +29,13 @@ input[disabled] {
     padding: 2px;
     position: relative;
     flex-direction: column;
-    width: 40rem;
+    width: 39rem;
     .colorpad {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         float: left;
-        max-width: 40rem;
+        max-width: 39rem;
         .color-pair {
             display: flex;
             flex-direction: row;
@@ -125,10 +125,10 @@ textarea {
     border-radius: 1.2em;
     background-color: #000;
     color: #fff;
-    width: calc(100% - 40px); /* Adjusted width */
+    width: calc(100%); /* Adjusted width */
     margin-top: 20px;
     padding: 10px;
-    min-height: 150px; /* Added min-height */
+    min-height: 200px; /* Added min-height */
     box-sizing: border-box; /* Include padding in width */
 }
 #status {
@@ -198,7 +198,7 @@ input[type="file"] {
     border: 1px dashed lightblue;
     float: left;
     padding: 5px;
-    margin-left: 15rem;
+    margin-left: 13rem;
     margin-top: -15rem;
     border-radius: 0.5em;
     display: flex;
@@ -223,7 +223,37 @@ input[type="file"] {
     margin-right: 5px;
 }
 
-@media (max-width: 950px) {
+@media (min-width: 900px) and (max-width: 1600px) {
+    .half {
+        float: top;
+        margin-right: 0; /* Reset margin for smaller screens */
+        from {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            max-width: 30rem;
+            max-height: 20rem;
+        }
+    }
+    #parameters {
+        height: 60rem;
+    }
+    .colorboard {
+        max-width: 39rem;
+        margin-left: 14rem;
+        margin-top: -35.25rem;
+    }
+    .dot-matrix-options {
+        max-height: 50rem;
+        margin-left: 13rem;
+        margin-top: -16rem;
+        margin-bottom: 5px;
+        width: 39rem;
+    }
+    
+}
+
+@media (max-width: 900px) {
     .half {
         float: top;
         margin-right: 0; /* Reset margin for smaller screens */
