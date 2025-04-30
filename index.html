@@ -1,399 +1,171 @@
 <!DOCTYPE html>
-<html>
-<head>
-<title>Image to MakeCode Arcade Converter</title>
-<style>
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        font-size: 18px;
-        padding: 10px;
-        border-radius: 15px;
-        background-color: #000;
-        color: #fff;
-    }
-    input[disabled] {
-        pointer-events: none;
-    }
-    #parameters {
-        border: 1px solid black;
-        background: #000;
-        border-color: green;
-        color: white;
-        overflow: auto;
-        margin: 10px 0;
-        padding: 5px;
-        border-radius: 0.3em;
-    }
-    #left {
-        margin-right: 80px;
-    }
-    .colorboard {
-        display: flex;
-        padding: 2px;
-        position: relative;
-        flex-direction: column;
-        width: 40rem;
-        .colorpad {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            float: left;
-            max-width: 40rem;
-            .color-pair {
-                display: flex;
-                flex-direction: row;
-                padding: 2px;
-                span {
-                    flex-wrap: wrap;
-                }
-                .colortext {
-                    transform: translateY(25%);
-                }
-            }
-        }
-    }
-    #colpad1 {
-        bottom: 10px;
-    }
-    #colpad2 {
-        bottom: 20px;
-    }
-    #colpad3 {
-        bottom: 30px;
-    }
-    button#run {
-        float: left;
-    }
-    #vleft {
-        margin-right: 50px;
-    }
-    .half {
-        float: left;
-        margin-right: 20px; /* Added space between halves */
-    }
-    .colorpick {
-        float: center;
-    }
-    label {
-        display: block;
-        margin: 10px 0; /* Adjusted margin */
-    }
-    button {
-        display: block;
-        color: #fff;
-        background-color: #000;
-        border-color: #fff;
-        border-style: solid;
-        border-radius: 1em;
-        margin-top: 20px;
-        padding: 15px;
-        cursor: pointer; /* Indicate clickable */
-    }
-    #run {
-        position: relative;
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
-    #copy {
-        margin-top: 1rem;
-    }
-    #download {
-        margin-top: 1rem;
-    }
-    button:disabled {
-        border-color: lightblue;
-        cursor: not-allowed; /* Indicate not clickable */
-    }
-    input {
-        background-color: #000;
-        border-color: #fff;
-        color: #fff;
-        border-style: solid;
-        border-radius: 0.3em;
-    }
-    input.colortext[type="text"] {
-        width: 3.5rem;
-        margin-bottom: 10px;
-    }
-    input[type="number"] {
-        display: block;
-        padding: 5px;
-        max-width: 100px;
-        margin-bottom: 10px;
-    }
-    textarea {
-        clear: both;
-        display: block;
-        border-radius: 1.2em;
-        background-color: #000;
-        color: #fff;
-        width: calc(100% - 40px); /* Adjusted width */
-        margin-top: 20px;
-        padding: 10px;
-        min-height: 150px; /* Added min-height */
-        box-sizing: border-box; /* Include padding in width */
-    }
-    #status {
-        margin-bottom: 10px;
-        background-color: lemonchiffon;
-        color: #333; /* Darker color for readability */
-        padding: 5px;
-        border-radius: 0.3em;
-        display: inline-block; /* Only take necessary width */
-    }
-    canvas {
-        float: left;
-        padding: 5px;
-        margin-right: 10px;
-        border: 1px solid gray; /* Added border */
-    }
-    img {
-        float: left;
-        padding: 5px;
-        margin-right: 10px;
-        border: 1px solid gray; /* Added border */
-    }
-    div.output {
-        display: flex;
-        flex-direction: row;
-    }
-    #info {
-        background-color: #000;
-        border: 1px solid hsl(100, 50%, 50%);
-        color: white;
-        margin-bottom: 1em;
-        padding: 0.5em;
-        padding-top: 0;
-        width: 600px;
-        border-radius: 2em;
-    }
-    input[type="file"] {
-        background-color: #000;
-        border-color: #fff;
-        color: white;
-        padding: 1em; /* Adjusted padding */
-        border: 1px solid hsl(40, 50%, 50%);
-        display: block; /* Make it block */
-        margin-bottom: 20px; /* Add space below */
-        #myPal {
-            margin-right: 30px;
-        }
-    }
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Image to MakeCode Arcade Converter</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
     
-    /* --- New Styles for Mode Selection and Dot Matrix Options --- */
-    .mode-selection {
-        margin-bottom: 20px;
-        padding: 10px;
-        border: 1px dashed gray;
-        border-radius: 0.5em;
-    }
-
-    @media (max-width: 800px) {
-        .half {
-            float: top;
-            margin-right: 0; /* Reset margin for smaller screens */
-            from {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                max-width: 30rem;
-                max-height: 20rem;
-            }
-        }
-        .colorboard {
-            width: 100%;
-        }
-    }
-    
-    .dot-matrix-options {
-        border: 1px dashed lightblue;
-        padding: 5px;
-        margin-top: 20rem;
-        border-radius: 0.5em;
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        max-height: 15rem;
-        width: 42rem
-    }
-    
-    .hidden {
-        display: none;
-    }
-    
-    .color-pair {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    .color-pair label {
-        margin: 0 10px 0 0;
-    }
-    .color-pair input[type="color"] {
-        margin-right: 5px;
-    }
-
-</style>
-</head>
-<body>
-
-<h1>Image to MakeCode Arcade Converter</h1>
-
-<div id="info">
-    <p>Upload an image (JPG, PNG, GIF) to convert it into MakeCode Arcade sprite code. Select processing mode and options.</p>
-</div>
-
-image input <input type="file" id="myFile" accept="image/*"/>
-
-pallete input <input type="file" id="myPal" accept="text/plain, .hex"/>
-
-<div id="status">Waiting for file...</div>
-
-<div id="parameters">
-    <h2>Parameters</h2>
-
-    <div class="mode-selection">
-        <h3>Processing Mode</h3>
-        <label><input type="radio" name="processingMode" id="modeSolid" value="solid" checked/> Solid Color (16-color palette)</label>
-        <label><input type="radio" name="processingMode" id="modeDotMatrix" value="dotMatrix"/> Dot Matrix</label>
-    </div>
-
-    <div class="half">
-        <h3>Image Size</h3>
-        <form>
-            <label>
-                <input type="radio" name="sizeOption" id="full-width" checked/> Full width (160px)
-            </label>
-            <label>
-                <input type="radio" name="sizeOption" id="full-height" /> Full height (120px)
-            </label>
-            <label>
-                <input type="radio" name="sizeOption" id="scale" /> Scale by factor:
-            </label>
-            <input type="number" id="factor" disabled value="0.1" step="0.01"/>
-            <label>
-                <input type="radio" name="sizeOption" id="custom" /> Custom size:
-            </label>
-            <label for="width">Width:</label>
-            <input type="number" class="custom" disabled id="width">
-            <label for="height">Height:</label>
-            <input type="number" class="custom" disabled id="height">
-            <label for="ratio"><input type="checkbox" class="custom" disabled id="ratio"/> size ratio</label>
-            <button id="copy" disabled>Copy code</button>
-            <button id="run" disabled>Convert Image</button>
-        </form>
-    </div>
-
-    <div class="half colorboard" >
-        <h3>16-Color Palette</h3>
-        <div class="colorpad">
-            <div class="color-pair">
-                <label for="col1">Color 01:</label>
-                <input type="color" id="col1" value="#ffffff" class="colorpicker">
-                <input type="text" id="col1" value="#ffffff" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col2">Color 02:</label>
-                <input type="color" id="col2" value="#ff2121" class="colorpicker">
-                <input type="text" id="col2" value="#ff2121" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col3">Color 03:</label>
-                <input type="color" id="col3" value="#ff93c4" class="colorpicker">
-                <input type="text" id="col3" value="#ff93c4" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col4">Color 04:</label>
-                <input type="color" id="col4" value="#ff8135" class="colorpicker">
-                <input type="text" id="col4" value="#ff8135" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col5">Color 05:</label>
-                <input type="color" id="col5" value="#fff609" class="colorpicker">
-                <input type="text" id="col5" value="#fff609" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col6">Color 06:</label>
-                <input type="color" id="col6" value="#249ca3" class="colorpicker">
-                <input type="text" id="col6" value="#249ca3" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col7">Color 07:</label>
-                <input type="color" id="col7" value="#78dc52" class="colorpicker">
-                <input type="text" id="col7" value="#78dc52" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col8">Color 08:</label>
-                <input type="color" id="col8" value="#003fad" class="colorpicker">
-                <input type="text" id="col8" value="#003fad" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col9">Color 09:</label>
-                <input type="color" id="col9" value="#87f2ff" class="colorpicker">
-                <input type="text" id="col9" value="#87f2ff" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col10">Color 10:</label>
-                <input type="color" id="col10" value="#8e2ec4" class="colorpicker">
-                <input type="text" id="col10" value="#8e2ec4" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col11">Color 11:</label>
-                <input type="color" id="col11" value="#a4839f" class="colorpicker">
-                <input type="text" id="col11" value="#a4839f" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col12">Color 12:</label>
-                <input type="color" id="col12" value="#5c406c" class="colorpicker">
-                <input type="text" id="col12" value="#5c406c" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col13">Color 13:</label>
-                <input type="color" id="col13" value="#e5cdc4" class="colorpicker">
-                <input type="text" id="col13" value="#e5cdc4" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col14">Color 14:</label>
-                <input type="color" id="col14" value="#91463d" class="colorpicker">
-                <input type="text" id="col14" value="#91463d" class="colortext">
-            </div>
-            <div class="color-pair">
-                <label for="col15">Color 15:</label>
-                <input type="color" id="col15" value="#000000" class="colorpicker">
-                <input type="text" id="col15" value="#000000" class="colortext">
-            </div>
+        <h1>Image to MakeCode Arcade Converter</h1>
+        
+        <div id="info">
+            <p>Upload an image (JPG, PNG, GIF) to convert it into MakeCode Arcade sprite code. Select processing mode and options.</p>
         </div>
-    </div>
-
-    <div class="dot-matrix-options hidden">
-        <h3>Dot Matrix Options</h3>
-        <div class="color-pair">
-            <label for="dotFgColor">Foreground Dot Color:</label>
-            <input type="color" id="dotFgColor" value="#ffffff" class="colorpicker">
-            <input type="text" id="dotFgColor" value="#ffffff" class="colortext">
+        
+        image input <input type="file" id="myFile" accept="image/*"/>
+        
+        pallete input <input type="file" id="myPal" accept="text/plain, .hex"/>
+        
+        <div id="status">Waiting for file...</div>
+        
+        <div id="parameters">
+            <h2>Parameters</h2>
+        
+            <div class="mode-selection">
+                <h3>Processing Mode</h3>
+                <label><input type="radio" name="processingMode" id="modeSolid" value="solid" checked/> Solid Color (16-color palette)</label>
+                <label><input type="radio" name="processingMode" id="modeDotMatrix" value="dotMatrix"/> Dot Matrix</label>
+            </div>
+        
+            <div class="half">
+                <h3>Image Size</h3>
+                <form>
+                    <label>
+                        <input type="radio" name="sizeOption" id="full-width" checked/> Full width (160px)
+                    </label>
+                    <label>
+                        <input type="radio" name="sizeOption" id="full-height" /> Full height (120px)
+                    </label>
+                    <label>
+                        <input type="radio" name="sizeOption" id="scale" /> Scale by factor:
+                    </label>
+                    <input type="number" id="factor" disabled value="0.1" step="0.01"/>
+                    <label>
+                        <input type="radio" name="sizeOption" id="custom" /> Custom size:
+                    </label>
+                    <label for="width">Width:</label>
+                    <input type="number" class="custom" disabled id="width">
+                    <label for="height">Height:</label>
+                    <input type="number" class="custom" disabled id="height">
+                    <label for="ratio"><input type="checkbox" class="custom" disabled id="ratio"/> size ratio</label>
+                    <button id="copy" disabled>Copy code</button>
+                    <button id="run" disabled>Convert Image</button>
+                </form>
+            </div>
+        
+            <div class="half colorboard" >
+                <h3>16-Color Palette</h3>
+                <div class="colorpad">
+                    <div class="color-pair">
+                        <label for="col1">Color 01:</label>
+                        <input type="color" id="col1" value="#ffffff" class="colorpicker">
+                        <input type="text" id="col1" value="#ffffff" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col2">Color 02:</label>
+                        <input type="color" id="col2" value="#ff2121" class="colorpicker">
+                        <input type="text" id="col2" value="#ff2121" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col3">Color 03:</label>
+                        <input type="color" id="col3" value="#ff93c4" class="colorpicker">
+                        <input type="text" id="col3" value="#ff93c4" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col4">Color 04:</label>
+                        <input type="color" id="col4" value="#ff8135" class="colorpicker">
+                        <input type="text" id="col4" value="#ff8135" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col5">Color 05:</label>
+                        <input type="color" id="col5" value="#fff609" class="colorpicker">
+                        <input type="text" id="col5" value="#fff609" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col6">Color 06:</label>
+                        <input type="color" id="col6" value="#249ca3" class="colorpicker">
+                        <input type="text" id="col6" value="#249ca3" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col7">Color 07:</label>
+                        <input type="color" id="col7" value="#78dc52" class="colorpicker">
+                        <input type="text" id="col7" value="#78dc52" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col8">Color 08:</label>
+                        <input type="color" id="col8" value="#003fad" class="colorpicker">
+                        <input type="text" id="col8" value="#003fad" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col9">Color 09:</label>
+                        <input type="color" id="col9" value="#87f2ff" class="colorpicker">
+                        <input type="text" id="col9" value="#87f2ff" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col10">Color 10:</label>
+                        <input type="color" id="col10" value="#8e2ec4" class="colorpicker">
+                        <input type="text" id="col10" value="#8e2ec4" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col11">Color 11:</label>
+                        <input type="color" id="col11" value="#a4839f" class="colorpicker">
+                        <input type="text" id="col11" value="#a4839f" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col12">Color 12:</label>
+                        <input type="color" id="col12" value="#5c406c" class="colorpicker">
+                        <input type="text" id="col12" value="#5c406c" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col13">Color 13:</label>
+                        <input type="color" id="col13" value="#e5cdc4" class="colorpicker">
+                        <input type="text" id="col13" value="#e5cdc4" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col14">Color 14:</label>
+                        <input type="color" id="col14" value="#91463d" class="colorpicker">
+                        <input type="text" id="col14" value="#91463d" class="colortext">
+                    </div>
+                    <div class="color-pair">
+                        <label for="col15">Color 15:</label>
+                        <input type="color" id="col15" value="#000000" class="colorpicker">
+                        <input type="text" id="col15" value="#000000" class="colortext">
+                    </div>
+                </div>
+            </div>
+        
+            <div class="dot-matrix-options hidden">
+                <h3>Dot Matrix Options</h3>
+                <div class="color-pair">
+                    <label for="dotFgColor">Foreground Dot Color:</label>
+                    <input type="color" id="dotFgColor" value="#ffffff" class="colorpicker">
+                    <input type="text" id="dotFgColor" value="#ffffff" class="colortext">
+                </div>
+                <div class="color-pair">
+                    <label for="dotBgColor">Background Dot Color:</label>
+                    <input type="color" id="dotBgColor" value="#000000" class="colorpicker">
+                    <input type="text" id="dotBgColor" value="#000000" class="colortext">
+                </div>
+                <div>
+                    <h4>Dot Matrix Application Type:</h4>
+                    <label><input type="radio" name="dotMatrixType" value="pattern" checked> Dot Pattern</label>
+                    <label><input type="radio" name="dotMatrixType" value="solidApprox"> Solid Approximation (using FG/BG colors)</label>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label for="dotBlockSize">Dot Block Size (e.g., 2 for 2x2):</label>
+                    <input type="number" id="dotBlockSize" value="2" min="1" max="8">
+                </div>
+            </div>
+        
         </div>
-        <div class="color-pair">
-            <label for="dotBgColor">Background Dot Color:</label>
-            <input type="color" id="dotBgColor" value="#000000" class="colorpicker">
-            <input type="text" id="dotBgColor" value="#000000" class="colortext">
-        </div>
-        <div>
-            <h4>Dot Matrix Application Type:</h4>
-            <label><input type="radio" name="dotMatrixType" value="pattern" checked> Dot Pattern</label>
-            <label><input type="radio" name="dotMatrixType" value="solidApprox"> Solid Approximation (using FG/BG colors)</label>
-        </div>
-        <div style="margin-top: 10px;">
-            <label for="dotBlockSize">Dot Block Size (e.g., 2 for 2x2):</label>
-            <input type="number" id="dotBlockSize" value="2" min="1" max="8">
-        </div>
-    </div>
-
-</div>
-
-<div class="output"><canvas></canvas> </div>
-
-<textarea class="" id="" rows="10" cols="80" readonly></textarea>
-    
-<script src="https://unpkg.com/gifuct-js@latest/dist/gifuct-js.min.js"></script>
-<script src="script.js"></script> </body>
+        
+        <div class="output"><canvas></canvas> </div>
+        
+        <textarea class="" id="" rows="10" cols="80" readonly></textarea>
+            
+        <script src="https://unpkg.com/gifuct-js@latest/dist/gifuct-js.min.js"></script>
+        <script src="main.js"></script>
+    </body>
 </html>
