@@ -17,6 +17,7 @@ input[disabled] {
     margin: 10px 0;
     padding: 5px;
     border-radius: 0.3em;
+    position: relative;
     height: 55rem;
 }
 #left {
@@ -25,8 +26,6 @@ input[disabled] {
 .colorboard {
     float: left;
     display: flex;
-    left: 14rem;
-    top: -35.25rem;
     padding: 2px;
     position: relative;
     flex-direction: column;
@@ -156,7 +155,10 @@ div.output {
     display: flex;
     flex-direction: row;
     float: left;
-    margin-top: -12.5rem;
+    border: 1px dashed rgb(255, 240, 157); /* Added border */
+    padding: 5px;
+    margin: 1px;
+    width: calc(100% - 13px); /* Adjusted width */
 }
 #info {
     background-color: #000;
@@ -167,6 +169,9 @@ div.output {
     padding-top: 0;
     width: 600px;
     border-radius: 2em;
+}
+div#info {
+    width: calc(100% - 20px); /* Adjusted width for smaller screens */
 }
 input[type="file"] {
     background-color: #000;
@@ -189,35 +194,17 @@ input[type="file"] {
     border-radius: 0.5em;
 }
 
-@media (max-width: 800px) {
-    .half {
-        float: top;
-        margin-right: 0; /* Reset margin for smaller screens */
-        from {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            max-width: 30rem;
-            max-height: 20rem;
-        }
-    }
-    .colorboard {
-        width: 100%;
-    }
-}
-
 .dot-matrix-options {
     border: 1px dashed lightblue;
     float: left;
-    margin-left: 12rem;
-    margin-top: -35.25rem;
     padding: 5px;
+    margin-left: 15rem;
+    margin-top: -15rem;
     border-radius: 0.5em;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     max-height: 15rem;
-    width: 42rem
 }
 
 .hidden {
@@ -234,4 +221,31 @@ input[type="file"] {
 }
 .color-pair input[type="color"] {
     margin-right: 5px;
+}
+
+@media (max-width: 950px) {
+    .half {
+        float: top;
+        margin-right: 0; /* Reset margin for smaller screens */
+        from {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            max-width: 30rem;
+            max-height: 20rem;
+        }
+    }
+    #parameters {
+        height: 70rem;
+    }
+    .colorboard {
+        max-width: 15rem;
+    }
+    .dot-matrix-options {
+        max-height: 50rem;
+        margin-left: -5px;
+        margin-top: 8rem;
+        margin-bottom: 5px;
+        width: 100%;
+    }
 }
