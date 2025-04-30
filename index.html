@@ -167,7 +167,7 @@
         width: 600px;
         border-radius: 2em;
     }
-    input#myFile {
+    input[type="file"] {
         background-color: #000;
         border-color: #fff;
         color: white;
@@ -175,6 +175,9 @@
         border: 1px solid hsl(40, 50%, 50%);
         display: block; /* Make it block */
         margin-bottom: 20px; /* Add space below */
+        #myPal {
+            margin-right: 30px;
+        }
     }
     
     /* --- New Styles for Mode Selection and Dot Matrix Options --- */
@@ -240,7 +243,9 @@
     <p>Upload an image (JPG, PNG, GIF) to convert it into MakeCode Arcade sprite code. Select processing mode and options.</p>
 </div>
 
-<input type="file" id="myFile" accept="image/*">
+image input <input type="file" id="myFile" accept="image/*"/>
+
+pallete input <input type="file" id="myPal" accept="text/plain, .hex"/>
 
 <div id="status">Waiting for file...</div>
 
@@ -275,7 +280,6 @@
             <input type="number" class="custom" disabled id="height">
             <label for="ratio"><input type="checkbox" class="custom" disabled id="ratio"/> size ratio</label>
             <button id="copy" disabled>Copy code</button>
-            <button id="download" disabled>Download</button>
             <button id="run" disabled>Convert Image</button>
         </form>
     </div>
@@ -359,14 +363,6 @@
                 <input type="text" id="col15" value="#000000" class="colortext">
             </div>
         </div>
-    </div>
-
-    <div class="half colorboard" id="colpad2">
-        
-    </div>
-
-    <div class="half colorboard" id="colpad3">
-
     </div>
 
     <div class="dot-matrix-options hidden">

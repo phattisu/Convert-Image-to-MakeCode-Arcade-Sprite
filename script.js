@@ -5,7 +5,6 @@ let originalImageSize = { width: 0, height: 0 };
 let gifData = null; // Store parsed GIF data
 let gifMinDelay = 0; // Store minimum GIF frame delay
 let imgrender = [];
-let dateString;
 
 // --- Get DOM Elements ---
 const canvas = document.querySelector("canvas");
@@ -173,6 +172,40 @@ dotMatrixTypeRadios.forEach(radio => {
     });
 });
 
+const palInput = document.getElementById('myPal')
+
+palInput.addEventListener('change', function(e) {
+    const file = palInput.files[0]
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const palText = reader.result;
+        // Assuming the palette text is in the format #RRGGBB per line
+        readPalText(palText);
+    };
+    reader.readAsText(file); // Read as text for palette files
+});
+
+function readPalText(palText) {
+    const lines = palText.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (i < 15) { // Assuming 16 colors max
+            let color = line.toString();
+            if (color.charAt(0) !== "#") color = "#" + color; // Add # if missing
+            
+            const colorInput = document.querySelector(`input.colorpicker[id='col${i + 1}']`);
+            if (colorInput && isValidHex(color)) {
+                colorInput.value = color;
+                syncColorToText(colorInput); // Sync text input as well
+            }
+        } else {
+            return; // Stop after 16 colors
+        }
+    };
+}
+
 dotBlockSizeInput.addEventListener("change", function() {
     dotBlockSize = parseInt(this.value, 10);
     if (isNaN(dotBlockSize) || dotBlockSize < 1) {
@@ -185,14 +218,6 @@ dotBlockSizeInput.addEventListener("change", function() {
     }
 });
 
-document.querySelector("button#download").forEach(canv => {
-    canv.addEventListener("click", function() {
-        if (file.type === "image/gif") {
-            return
-        }
-        ReImg.fromCanvas(canvas).downloadPng()
-    })
-})
 
 // Prevent form submission from refreshing
 form.addEventListener("submit", function convertImage(event) {
@@ -274,7 +299,6 @@ async function whenImageIsUploaded() {
             img.src = e.target.result;
         }
     };
-    document.querySelector("button#download").removeAttribute("disabled")
 
     reader.readAsDataURL(file); // Read as Data URL for static images
 }
@@ -672,7 +696,7 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
         // Return frame string and delay
         return { spriteCode: spriteCode, delay: gifData.frames[frameIndex].delay || gifMinDelay };
     } else {
-        dateString = new Date()
+        let dateString = new Date()
 		.toISOString()
 		.replaceAll("-", "")
 		.replaceAll(":", "")
@@ -886,18 +910,16 @@ document.querySelectorAll("input#height").forEach(iheight => {
     })
 })
 
-document.querySelector("input#custom").forEach(check => {
-    check.addEventListener("change", function () {
-        if (check.checked) {
-            if (document.querySelector("img")) {
-                document.querySelector("input#height").value = document.querySelector("img").height;
-                document.querySelector("input#width").value = document.querySelector("img").width;
-            } else {
-                document.querySelector("input#height").value = canvas.height;
-                document.querySelector("input#width").value = canvas.width;
-            }
+document.querySelector("input#ratio").addEventListener("change", function () {
+    if (check.checked) {
+        if (document.querySelector("img")) {
+            document.querySelector("input#height").value = document.querySelector("img").height;
+            document.querySelector("input#width").value = document.querySelector("img").width;
+        } else {
+            document.querySelector("input#height").value = canvas.height;
+            document.querySelector("input#width").value = canvas.width;
         }
-    })
+    }
 })
 
 
@@ -925,102 +947,3 @@ copyButton.addEventListener("click", function addCodeToClipboard() {
 });
 
 console.log(document.querySelector("input#ratio").disabled)
-
-ReImg = {
-
-    OutputProcessor: function(encodedData, svgElement) {
-
-        var isPng = function() {
-            return encodedData.indexOf('data:image/png') === 0;
-        };
-
-        var downloadImage = function(data, filename) {
-            var a = document.createElement('a');
-            a.href = data;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-        };
-
-        return {
-            toBase64: function() {
-                return encodedData;
-            },
-            toImg: function() {
-                var imgElement = document.createElement('img');
-                imgElement.src = encodedData;
-                return imgElement;
-            },
-            toCanvas: function(callback) {
-                var canvas = document.createElement('canvas');
-                var boundedRect = svgElement.getBoundingClientRect();
-                canvas.width = boundedRect.width;
-                canvas.height = boundedRect.height;
-                var canvasCtx = canvas.getContext('2d');
-
-                var img = this.toImg();
-                img.onload = function() {
-                    canvasCtx.drawImage(img, 0, 0);
-                    callback(canvas);
-                };
-            },
-            toPng: function() {
-                if (isPng()) {
-                    var img = document.createElement('img');
-                    img.src = encodedData;
-                    return img;
-                }
-
-                this.toCanvas(function(canvas) {
-                    var img = document.createElement('img');
-                    img.src = canvas.toDataURL();
-                    return img;
-                });
-            },
-            toJpeg: function(quality) { // quality should be between 0-1
-                quality = quality || 1.0;
-                (function(q) {
-                    this.toCanvas(function(canvas) {
-                        var img = document.createElement('img');
-                        img.src = canvas.toDataURL('image/jpeg', q);
-                        return img;
-                    });
-                })(quality);
-            },
-            downloadPng: function(filename) {
-                filename = filename || 'image.png';
-                if (isPng()) {
-                    // it's a canvas already
-                    downloadImage(encodedData, filename);
-                    return;
-                }
-
-                // convert to canvas first
-                this.toCanvas(function(canvas) {
-                    downloadImage(canvas.toDataURL(), filename);
-                });
-            }
-        };
-    },
-
-    fromSvg: function(svgElement) {
-        var svgString = new XMLSerializer().serializeToString(svgElement);
-        return new this.OutputProcessor('data:image/svg+xml;base64,' + window.btoa(svgString), svgElement);
-    },
-
-    fromCanvas: function(canvasElement) {
-        var dataUrl = canvasElement.toDataURL();
-        return new this.OutputProcessor(dataUrl);
-    }
-
-};
-
-if(typeof exports === 'object' && typeof module !==  void 0) {
-    module.exports = {
-        ReImg:ReImg
-    };
-}
-
-else {
-    window.ReImg = ReImg;
-}
