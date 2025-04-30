@@ -234,8 +234,8 @@ dotBlockSizeInput.addEventListener("change", function() {
 
 // Prevent form submission from refreshing
 form.addEventListener("submit", function convertImage(event) {
-    event.preventDefault();
-     // Conversion now happens on runButton click
+    event.preventDefault(); // Prevent form submission
+
 });
 
 // --- Image Loading and GIF Parsing ---
