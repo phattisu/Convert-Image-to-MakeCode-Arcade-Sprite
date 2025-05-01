@@ -27,6 +27,8 @@ input[disabled] {
     float: left;
     display: flex;
     padding: 2px;
+    margin-top: -0.25rem;
+    margin-left: -3.25rem;
     position: relative;
     flex-direction: column;
     width: 39rem;
@@ -37,14 +39,21 @@ input[disabled] {
         float: left;
         max-width: 39rem;
         .color-pair {
+            margin-left: -2px;
             display: flex;
             flex-direction: row;
+            flex-wrap: wrap;
             padding: 2px;
+            max-width: 12rem;
+            label {
+                margin-right: 1.5px;
+            }
             span {
                 flex-wrap: wrap;
             }
             .colortext {
                 transform: translateY(25%);
+                margin-left: -1px;
             }
         }
     }
@@ -142,13 +151,13 @@ textarea {
 canvas {
     float: left;
     padding: 5px;
-    margin-right: 10px;
+    margin: 2.5px;
     border: 1px solid gray; /* Added border */
 }
 img {
     float: left;
     padding: 5px;
-    margin-right: 10px;
+    margin: 2.5px;
     border: 1px solid gray; /* Added border */
 }
 div.output {
@@ -158,7 +167,7 @@ div.output {
     border: 1px dashed rgb(255, 240, 157); /* Added border */
     padding: 5px;
     margin: 1px;
-    width: calc(100% - 13px); /* Adjusted width */
+    min-width: calc(100% - 0.75em);
 }
 #info {
     background-color: #000;
@@ -198,8 +207,8 @@ input[type="file"] {
     border: 1px dashed lightblue;
     float: left;
     padding: 5px;
-    margin-left: 13rem;
-    margin-top: -15rem;
+    margin-left: -3rem;
+    margin-top: 0rem;
     border-radius: 0.5em;
     display: flex;
     flex-direction: column;
@@ -223,7 +232,7 @@ input[type="file"] {
     margin-right: 5px;
 }
 
-@media (min-width: 900px) and (max-width: 1600px) {
+@media (min-width: 900px) and (max-width: 1050px) {
     .half {
         float: top;
         margin-right: 0; /* Reset margin for smaller screens */
@@ -240,7 +249,7 @@ input[type="file"] {
     }
     .colorboard {
         max-width: 39rem;
-        margin-left: 14rem;
+        margin-left: 11.75rem;
         margin-top: -35.25rem;
     }
     .dot-matrix-options {
@@ -253,7 +262,41 @@ input[type="file"] {
     
 }
 
-@media (max-width: 900px) {
+@media (min-width: 420px) and (max-width: 900px) {
+    body {
+        padding: 2px;
+    }
+    .half {
+        float: top;
+        margin-right: 0; /* Reset margin for smaller screens */
+        from {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            max-width: 30rem;
+            max-height: 20rem;
+        }
+    }
+    #parameters {
+        height: 52rem;
+    }
+    .colorboard {
+        max-width: fit-content;
+        margin-left: 10rem;
+        margin-top: -35.25rem;
+    }
+    .dot-matrix-options {
+        max-height: 30rem;
+        margin-left: calc(0rem - 5.5px);
+        margin-top: 2rem;
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    body {
+        padding: 2px;
+    }
     .half {
         float: top;
         margin-right: 0; /* Reset margin for smaller screens */
@@ -269,7 +312,9 @@ input[type="file"] {
         height: 70rem;
     }
     .colorboard {
-        max-width: 15rem;
+        max-width: 14rem;
+        margin-top: -35.25rem;
+        margin-left: 9rem;
     }
     .dot-matrix-options {
         max-height: 50rem;
@@ -278,4 +323,8 @@ input[type="file"] {
         margin-bottom: 5px;
         width: 100%;
     }
+    div.output {
+        flex-direction: row;
+    }
+    
 }
