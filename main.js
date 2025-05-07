@@ -40,12 +40,89 @@ function hexToRgb(hex) {
     const r = parseInt(hex[1] + hex[2], 16);
     const g = parseInt(hex[3] + hex[4], 16);
     const b = parseInt(hex[5] + hex[6], 16);
-    return { r, g, b };
+    return { r: r, g: g, b: b};
 }
 
 function rgbToHex(r, g, b) {
     const toHex = (c) => c.toString(16).padStart(2, '0');
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function colorSqrt(color) {
+    return Math.sqrt(color.r * color.r + color.g * color.g + color.b * color.b); // คำนวณระยะห่างจากสีดำ (0, 0, 0)
+}
+
+function colorInvert(color) {
+    // ฟังก์ชันสำหรับกลับสี (invert) โดยการเปลี่ยนค่า RGB เป็น 255 - ค่าเดิม
+    return {
+        r: 255 - color.r,
+        g: 255 - color.g,
+        b: 255 - color.b,
+        a: color.a // คงค่า alpha เดิมไว้
+    };
+}
+
+function colorDivide(color, divisor) {
+    // ฟังก์ชันสำหรับแบ่งสี (divide) โดยการหารค่า RGB ด้วยตัวหารที่กำหนด
+    return {
+        r: Math.round(color.r / divisor),
+        g: Math.round(color.g / divisor),
+        b: Math.round(color.b / divisor),
+        a: color.a // คงค่า alpha เดิมไว้
+    };
+}
+
+// ฟังก์ชันคำนวณระยะห่างสูงสุดที่เป็นไปได้ระหว่างสีสองสี (จาก #000000 ถึง #FFFFFF)
+function getMaxPossibleDistance() {
+    // ระยะห่างระหว่างดำสนิทกับขาวสนิท
+    // RGB for #000000 is (0, 0, 0)
+    // RGB for #FFFFFF is (255, 255, 255)
+    const dr = 0 - 255;
+    const dg = 0 - 255;
+    const db = 0 - 255;
+    return Math.sqrt(dr * dr + dg * dg + db * db);
+}
+
+// ฟังก์ชันหลักสำหรับเปรียบเทียบคู่สีที่ป้อนกับพาเลทสี
+function compareColorsWithPalette(inputSqrt, palette) {
+    const inputDistance = inputSqrt;
+
+    const maxDistance = getMaxPossibleDistance();
+    let minDistanceDifference = Infinity;
+    let closestPair = {};
+
+    // วนลูปผ่านทุกคู่สีที่เป็นไปได้ในพาเลท
+    for (let i = 1; i < palette.length; i++) {
+        for (let j = i + 1; j < palette.length; j++) { // เริ่มจาก j = i + 1 เพื่อหลีกเลี่ยงคู่สีซ้ำและเปรียบเทียบสีเดียวกัน
+            const paletteColor1 = palette[i].color;
+            const paletteColor2 = palette[j].color;
+
+            const currentPaletteDistance = colorDistance(paletteColor1, paletteColor2);
+
+            if (currentPaletteDistance === null) {
+                // ข้ามคู่สีในพาเลทที่ไม่ถูกต้อง
+                continue;
+            }
+
+
+            // คำนวณความแตกต่างของระยะห่างระหว่างคู่สีที่ป้อนกับคู่สีในพาเลท
+            const distanceDifference = Math.abs(inputDistance - currentPaletteDistance);
+
+            // หากความแตกต่างน้อยกว่าค่าต่ำสุดที่เคยเจอ ให้เก็บคู่นี้ไว้
+            if (distanceDifference < minDistanceDifference) {
+                minDistanceDifference = distanceDifference;
+                closestPair = {col1: paletteColor1, col2: paletteColor2};
+            }
+        }
+    }
+
+    // คำนวณเปอร์เซ็นต์ความเหมือน
+    // ความเหมือน 100% คือเมื่อ distanceDifference เป็น 0
+    // ความเหมือน 0% คือเมื่อ distanceDifference เท่ากับ maxDistance (ค่าสูงสุดของระยะห่าง)
+    const similarityPercentage = ((maxDistance  - minDistanceDifference) / maxDistance) * 1;
+
+    if (!closestPair) return {percent: similarityPercentage, color1: null, color2: null}; // ไม่มีคู่สีที่ใกล้เคียงที่สุด
+    return {percent: similarityPercentage, color1: closestPair.col1, color2: closestPair.col2}
 }
 
 function getPixelColor(imageData, x, y) {
@@ -367,6 +444,7 @@ function rgb(r,g,b) {
 // --- Image Processing Function ---
 async function convert(imgElement, frameImageData = null, frameIndex = 0) {
     copyButton.innerText = "Copy code"; // Reset text
+    dotBlockSize = parseInt(dotBlockSizeInput.value, 10) || 1; // Default to 1 if not set
 
     imgrender = []
     let sourceImageData;
@@ -432,10 +510,6 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
             index: (index).toString(16)
         };
     });
-
-    const dotFgRgb = hexToRgb(dotFgColorInput.value);
-    const dotBgRgb = hexToRgb(dotBgColorInput.value);
-
 
     let pixelIndex = 0;
     const outputImageData = ctx.createImageData(outputCanvasWidth, outputCanvasHeight);
@@ -507,6 +581,39 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
 
                 } else if (currentMode === "dotMatrix") {
                     // --- Dot Matrix Mode ---
+                    const nearest = arcadeColors.sort((prev, curr) => {
+                        const distPrev = colorDistance(originalPixelColor, prev.color);
+                        const distCurr = colorDistance(originalPixelColor, curr.color);
+                        return distPrev - distCurr;
+                    })[0];
+
+                    const colorPair = compareColorsWithPalette(colorSqrt(originalPixelColor - nearest.color), arcadeColors)
+
+                    if (!colorPair.color1) colorPair.color1 = colorInvert(nearest.color); // Fallback to nearest color if no pair found
+                    if (colorPair.color1) colorPair.color1 = colorInvert(colorPair.color1); // Invert the first color in the pair
+                    
+                    if (!colorPair.color2) colorPair.color2 = nearest.color; // Fallback to nearest color if no pair found
+                    if (colorPair.color2) colorPair.color2 = colorInvert(colorPair.color2); // Invert the second color in the pair
+
+                    colorPair.color1.a = 255;
+                    colorPair.color2.a = 255;
+
+                    const nearestPair = {}
+
+                    nearestPair.color1 = arcadeColors.sort((prev, curr) => {
+                        const distPrev = colorDistance(colorPair.color1, prev.color);
+                        const distCurr = colorDistance(colorPair.color1, curr.color);
+                        return distPrev - distCurr;
+                    })[0];
+                    nearestPair.color2 = arcadeColors.sort((prev, curr) => {
+                        const distPrev = colorDistance(colorPair.color2, prev.color);
+                        const distCurr = colorDistance(colorPair.color2, curr.color);
+                        return distPrev - distCurr;
+                    })[0];
+                
+                    const dotFgRgb = nearestPair.color1.color;
+                    const dotBgRgb = nearestPair.color2.color;
+                
                     const distFg = colorDistance(originalPixelColor, dotFgRgb);
                     const distBg = colorDistance(originalPixelColor, dotBgRgb);
 
@@ -521,13 +628,15 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     } else if (distBg === 0) {
                         percentage = 0; // Exactly matches Background
                     } else {
-			if (distBg > distFg) {
-			    percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
-			}                                            // Closer to FG means smaller distFg, larger percentage (closer to FG color)
+            			if (distBg > distFg) {
+            			    percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
+            			}                                            // Closer to FG means smaller distFg, larger percentage (closer to FG color)
                         else {                                       // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
                             percentage = distFg / (distFg + distBg); // Higher % means closer to FG color
-			}
-		}
+            			}
+            		}
+
+                    percentage = 1 - colorPair.percent; // Use the similarity percentage from the comparison function
 
                     // Clamp percentage between 0 and 1
                     percentage = Math.max(0, Math.min(1,percentage));
