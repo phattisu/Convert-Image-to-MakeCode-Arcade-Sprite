@@ -58,7 +58,7 @@ function colorInvert(color) {
         r: 255 - color.r,
         g: 255 - color.g,
         b: 255 - color.b,
-        a: color.a // คงค่า alpha เดิมไว้
+        a: (color.a)?color.a:255 // คงค่า alpha เดิมไว้
     };
 }
 
@@ -68,7 +68,7 @@ function colorDivide(color, divisor) {
         r: Math.round(color.r / divisor),
         g: Math.round(color.g / divisor),
         b: Math.round(color.b / divisor),
-        a: color.a // คงค่า alpha เดิมไว้
+        a: (color.a)?color.a:255 // คงค่า alpha เดิมไว้
     };
 }
 
@@ -84,16 +84,17 @@ function getMaxPossibleDistance() {
 }
 
 // ฟังก์ชันหลักสำหรับเปรียบเทียบคู่สีที่ป้อนกับพาเลทสี
-function compareColorsWithPalette(inputSqrt, palette) {
+async function compareColorsWithPalette(inputSqrt, palette) {
     const inputDistance = inputSqrt;
 
     const maxDistance = getMaxPossibleDistance();
     let minDistanceDifference = Infinity;
-    let closestPair = {};
+    let closestPair = {col1: null, col2: null};
 
     // วนลูปผ่านทุกคู่สีที่เป็นไปได้ในพาเลท
     for (let i = 1; i < palette.length; i++) {
-        for (let j = i + 1; j < palette.length; j++) { // เริ่มจาก j = i + 1 เพื่อหลีกเลี่ยงคู่สีซ้ำและเปรียบเทียบสีเดียวกัน
+        for (let j = 1; j < palette.length; j++) { // เริ่มจาก j = i + 1 เพื่อหลีกเลี่ยงคู่สีซ้ำและเปรียบเทียบสีเดียวกัน
+            if (i === j) continue; // ข้ามคู่สีเดียวกัน
             const paletteColor1 = palette[i].color;
             const paletteColor2 = palette[j].color;
 
@@ -121,8 +122,7 @@ function compareColorsWithPalette(inputSqrt, palette) {
     // ความเหมือน 0% คือเมื่อ distanceDifference เท่ากับ maxDistance (ค่าสูงสุดของระยะห่าง)
     const similarityPercentage = ((maxDistance  - minDistanceDifference) / maxDistance) * 1;
 
-    if (!closestPair) return {percent: similarityPercentage, color1: null, color2: null}; // ไม่มีคู่สีที่ใกล้เคียงที่สุด
-    return {percent: similarityPercentage, color1: closestPair.col1, color2: closestPair.col2}
+    return ({percent: similarityPercentage, color1: closestPair.col1, color2: closestPair.col2}); // ส่งคืนคู่สีที่ใกล้เคียงที่สุด
 }
 
 function getPixelColor(imageData, x, y) {
@@ -355,7 +355,14 @@ async function whenImageIsUploaded() {
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 const gif = new GIFuct(arrayBuffer);
-                gifData = gif.parseGIF();
+                gifData = gif.parseGIF()
+                    .then(parsedData => {
+                        console.log("Parsed GIF data:", parsedData);
+                        return parsedData;
+                    })
+                    .catch(error => {
+                        comsole.error("Error parsing GIF:", error);
+                    });
 
                 if (gifData.frames.length > 0) {
                     gifMinDelay = gifData.frames.reduce((min, frame) => Math.min(min, frame.delay || Infinity), Infinity);
@@ -586,17 +593,19 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                         const distCurr = colorDistance(originalPixelColor, curr.color);
                         return distPrev - distCurr;
                     })[0];
-
-                    const colorPair = compareColorsWithPalette(colorSqrt(originalPixelColor - nearest.color), arcadeColors)
-
-                    if (!colorPair.color1) colorPair.color1 = colorInvert(nearest.color); // Fallback to nearest color if no pair found
-                    if (colorPair.color1) colorPair.color1 = colorInvert(colorPair.color1); // Invert the first color in the pair
                     
-                    if (!colorPair.color2) colorPair.color2 = nearest.color; // Fallback to nearest color if no pair found
-                    if (colorPair.color2) colorPair.color2 = colorInvert(colorPair.color2); // Invert the second color in the pair
-
-                    colorPair.color1.a = 255;
-                    colorPair.color2.a = 255;
+                    const colorPair =  { percent: null, color1: {r: nearest.color.r, g: nearest.color.g, b: nearest.color.b, a: 255}, color2: colorInvert(nearest.color) }
+                    
+                    try {
+                        const colorPairResult = await compareColorsWithPalette(colorDistance(originalPixelColor, nearest.color), arcadeColors);
+                        colorPair.color1 = colorInvert(colorPairResult.color1);
+                        colorPair.color2 = colorInvert(colorPairResult.color2);
+                        colorPair.percent = colorPairResult.percent; // Use the similarity percentage from the comparison function
+                        console.log("Color pair result:", colorPairResult);
+                    } catch (error) {
+                        console.error("Error comparing colors:", error);
+                        colorPair.percent = null; // Handle error case
+                    }
 
                     const nearestPair = {}
 
@@ -628,15 +637,14 @@ async function convert(imgElement, frameImageData = null, frameIndex = 0) {
                     } else if (distBg === 0) {
                         percentage = 0; // Exactly matches Background
                     } else {
-            			if (distBg > distFg) {
-            			    percentage = distBg / (distFg + distBg); // Closer to BG means smaller distBg, smaller percentage (closer to BG color)
-            			}                                            // Closer to FG means smaller distFg, larger percentage (closer to FG color)
-                        else {                                       // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
-                            percentage = distFg / (distFg + distBg); // Higher % means closer to FG color
-            			}
+            			percentage = distBg / (distFg + distBg);// Closer to BG means smaller distBg, smaller percentage (closer to BG color)
+            			                                        // Closer to FG means smaller distFg, larger percentage (closer to FG color)
+                                                                // Let's flip this: distFg / (distFg + distBg) -> Higher % means closer to FG
+                        percentage = distFg / (distFg + distBg);// Higher % means closer to FG color
             		}
 
-                    percentage = 1 - colorPair.percent; // Use the similarity percentage from the comparison function
+                    if (colorPair.percent === null) colorPair.percent = percentage; // Fallback to calculated percentage if null
+                    else percentage = colorPair.percent; // Use the similarity percentage from the comparison function
 
                     // Clamp percentage between 0 and 1
                     percentage = Math.max(0, Math.min(1,percentage));
@@ -1033,7 +1041,7 @@ document.querySelectorAll("input#height").forEach(iheight => {
 })
 
 document.querySelector("input#ratio").addEventListener("change", function () {
-    if (check.checked) {
+    if (document.querySelector("input#ratio").checked) {
         if (document.querySelector("img")) {
             document.querySelector("input#height").value = document.querySelector("img").height;
             document.querySelector("input#width").value = document.querySelector("img").width;
