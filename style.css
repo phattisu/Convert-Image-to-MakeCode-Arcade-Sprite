@@ -20,6 +20,7 @@ input[disabled] {
     position: relative;
     height: 55rem;
 }
+
 #left {
     margin-right: 80px;
 }
@@ -139,6 +140,7 @@ textarea {
     padding: 10px;
     min-height: 200px; /* Added min-height */
     box-sizing: border-box; /* Include padding in width */
+    resize: none;
 }
 #status {
     margin-bottom: 10px;
