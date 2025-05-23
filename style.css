@@ -130,8 +130,6 @@ input[type="number"] {
     margin-bottom: 10px;
 }
 textarea {
-    clear: both;
-    display: block;
     border-radius: 1.2em;
     background-color: #000;
     color: #fff;
@@ -139,7 +137,6 @@ textarea {
     margin-top: 20px;
     padding: 10px;
     min-height: 200px; /* Added min-height */
-    box-sizing: border-box; /* Include padding in width */
     resize: none;
 }
 #status {
